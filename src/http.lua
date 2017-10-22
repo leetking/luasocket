@@ -122,6 +122,21 @@ function _M.open(host, port, create)
     return h
 end
 
+--[[
+-- Combine sendrequestline() and sendheaders() for some f*ck server.
+-- Modify by leetking <li_Tking@163.com>
+-- 2017/10/22 18:03:17 CST
+--]]
+function metat.__index:sendrequest(method, uri, tosend)
+    local reqline = string.format("%s %s HTTP/1.1\r\n", method or "GET", uri)
+    local canonic = headers.canonic
+    local h = "\r\n"
+    for f, v in base.pairs(tosend) do
+        h = (canonic[f] or f) .. ": " .. v .. "\r\n" .. h
+    end
+    return self.try(self.c:send(h..tosend))
+end
+
 function metat.__index:sendrequestline(method, uri)
     local reqline = string.format("%s %s HTTP/1.1\r\n", method or "GET", uri)
     return self.try(self.c:send(reqline))
@@ -314,8 +329,9 @@ end
     local nreqt = adjustrequest(reqt)
     local h = _M.open(nreqt.host, nreqt.port, nreqt.create)
     -- send request line and headers
-    h:sendrequestline(nreqt.method, nreqt.uri)
-    h:sendheaders(nreqt.headers)
+    --h:sendrequestline(nreqt.method, nreqt.uri)
+    --h:sendheaders(nreqt.headers)
+    h:sendrequest(nreqt.method, nreqt.uri, nreqt.headers)
     -- if there is a body, send it
     if nreqt.source then
         h:sendbody(nreqt.headers, nreqt.source, nreqt.step)

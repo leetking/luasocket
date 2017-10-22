@@ -1,7 +1,7 @@
 package = "LuaSocket"
 version = "scm-0"
 source = {
-   url = "https://github.com/diegonehab/luasocket/archive/master.zip",
+   url = "https://github.com/leetking/luasocket/archive/master.zip",
    dir = "luasocket-master",
 }
 description = {
